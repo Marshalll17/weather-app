@@ -1,5 +1,6 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useRef } from 'react';
 import axios from 'axios';
+import process from 'process';
 import './app.css';
 import SearchInput from './components/SearchInput';
 import WeatherInfo from './components/WeatherInfo';
@@ -28,6 +29,7 @@ const initialState = {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -77,7 +79,7 @@ function App() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (state.query) {
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${state.query}&appid=eebac2b236501ab0cfa5b85cc864e1f7`;
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${state.query}&appid=${process.env.REACT_APP_OPENWEATHERMAP_API_KEY}`;
       try {
         const response = await axios.get(url);
         dispatch({ type: 'SET_WEATHER_DATA', payload: response.data });
@@ -96,6 +98,7 @@ function App() {
         results={state.results}
         showDropdown={state.showDropdown}
         handleSelect={handleSelect}
+        dropdownRef={dropdownRef}
       />
       {state.weatherData ? (
         <WeatherInfo weatherData={state.weatherData} />
